@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indian Art Through Time — Interactive Timeline</title>
+<style>
+:root{
+  --bg:#0b0d12; --panel:#141821; --panel2:#1b202b; --text:#f5f5f5;
+  --muted:#aeb6c4; --accent:#e8b86a; --line:#3a414e; --shadow:0 18px 50px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:radial-gradient(circle at top,#1c2029 0,#0b0d12 48%);
+  color:var(--text);line-height:1.6;
+}
+header{
+  padding:70px 20px 45px;text-align:center;max-width:1000px;margin:auto;
+}
+.kicker{color:var(--accent);font-weight:800;letter-spacing:2px;text-transform:uppercase;font-size:.8rem}
+h1{font-size:clamp(2.2rem,6vw,4.8rem);line-height:1.05;margin:14px 0}
+.subtitle{max-width:760px;margin:auto;color:var(--muted);font-size:1.05rem}
+.student{
+  margin:28px auto 0;display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:center;
+  background:var(--panel);padding:12px 16px;border:1px solid var(--line);border-radius:999px;color:var(--muted)
+}
+.student span{color:var(--text);font-weight:700}
+
+.controls{
+  position:sticky;top:0;z-index:5;background:rgba(11,13,18,.88);backdrop-filter:blur(14px);
+  border-block:1px solid var(--line);padding:12px 16px;
+}
+.controls-inner{max-width:1100px;margin:auto;display:flex;gap:8px;overflow:auto}
+button{
+  border:1px solid var(--line);background:var(--panel);color:var(--text);padding:9px 14px;
+  border-radius:999px;cursor:pointer;white-space:nowrap;font-weight:700
+}
+button:hover,button.active{background:var(--accent);color:#15120d;border-color:var(--accent)}
+
+.timeline{max-width:1100px;margin:55px auto;padding:0 20px 70px;position:relative}
+.timeline:before{
+  content:"";position:absolute;left:31px;top:0;bottom:0;width:3px;
+  background:linear-gradient(var(--accent),#586174,var(--accent));border-radius:5px
+}
+.event{
+  position:relative;margin:0 0 34px 0;padding-left:72px;
+}
+.dot{
+  position:absolute;left:20px;top:25px;width:25px;height:25px;border-radius:50%;
+  background:var(--accent);border:5px solid var(--bg);box-shadow:0 0 0 2px var(--accent)
+}
+.card{
+  display:grid;grid-template-columns:300px 1fr;gap:24px;background:linear-gradient(145deg,var(--panel),var(--panel2));
+  border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow);
+}
+.card img{width:100%;height:230px;object-fit:cover;border-radius:15px;background:#242936}
+.year{color:var(--accent);font-weight:900;font-size:.95rem}
+h2{margin:4px 0 2px;font-size:1.55rem}
+.meta{color:var(--muted);font-size:.9rem;margin-bottom:10px}
+.desc{color:#d6dae2}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.view{background:var(--accent);color:#15120d;border-color:var(--accent)}
+.source{font-size:.86rem}
+.source a{color:var(--accent)}
+
+.modal{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:20;padding:20px;overflow:auto;
+}
+.modal.show{display:flex;align-items:center;justify-content:center}
+.modal-box{
+  max-width:900px;width:100%;background:var(--panel);border:1px solid var(--line);
+  border-radius:24px;padding:24px;position:relative;box-shadow:var(--shadow)
+}
+.close{position:absolute;right:18px;top:14px;background:transparent;font-size:1.3rem}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.modal-grid img{width:100%;max-height:620px;object-fit:contain;border-radius:16px;background:#0c0e13}
+.detail-list{padding-left:20px}.detail-list li{margin:8px 0}
+.note{
+  max-width:1100px;margin:0 auto 70px;padding:25px 20px;
+}
+.note-box{
+  background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:22px;
+}
+footer{border-top:1px solid var(--line);padding:35px 20px;color:var(--muted);text-align:center}
+@media(max-width:760px){
+  .card,.modal-grid{grid-template-columns:1fr}
+  .card img{height:250px}
+  .timeline:before{left:24px}.event{padding-left:52px}.dot{left:13px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="kicker">Assignment 1 · Interactive Timeline</div>
+  <h1>Indian Art Through Time</h1>
+  <p class="subtitle">
+    An interactive journey through major periods of Indian art — from the Indus Valley
+    Civilization to modern Indian painting. Click any artifact to explore its form,
+    material, meaning and historical context.
+  </p>
+  <div class="student">
+    <span>Student:</span> Khalid Jibran &nbsp;•&nbsp; <span>Section:</span> Y1•&nbsp; <span>RA No.:</span> RA2411030010135
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <button class="filter active" data-filter="all">All Periods</button>
+    <button class="filter" data-filter="ancient">Ancient</button>
+    <button class="filter" data-filter="classical">Classical</button>
+    <button class="filter" data-filter="medieval">Medieval</button>
+    <button class="filter" data-filter="modern">Modern</button>
+  </div>
+</div>
+
+<main class="timeline" id="timeline"></main>
+
+<section class="note">
+  <div class="note-box">
+    <h2>How this timeline works</h2>
+    <p>
+      The timeline uses clickable artifact cards. Each card opens a larger virtual view
+      with the artifact's date, medium, location, significance and a short original
+      historical interpretation. The period buttons filter the timeline instantly.
+    </p>
+    <p><strong>Image note:</strong> Images are linked to museum/Wikimedia collection pages.
+      Source and credit information is provided for academic reference.</p>
+  </div>
+</section>
+
+<footer>
+  <div><strong>Indian Art Through Time</strong> · Interactive Digital Timeline</div>
+  <div>Prepared for academic use. Historical descriptions are written in original wording.</div>
+</footer>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <button class="close" id="close">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+const artifacts = [
+{
+  period:"ancient", year:"c. 2500 BCE", era:"Indus Valley Civilization",
+  title:"Dancing Girl of Mohenjo-daro",
+  medium:"Bronze statuette",
+  place:"Mohenjo-daro · present-day Sindh region",
+  image:"https://commons.wikimedia.org/wiki/Special:Redirect/file/Dancing_girl.jpg",
+  source:"https://commons.wikimedia.org/wiki/File:Dancing_girl.jpg",
+  credit:"Wikimedia Commons photograph; sculpture in the National Museum, New Delhi",
+  summary:"A small bronze figure whose confident pose and ornamentation give a vivid glimpse into the visual culture of the Harappan world.",
+  points:[
+    "The figure is made using bronze and is only around 14 cm high.",
+    "Its relaxed stance, jewellery and raised arm create a strong sense of movement despite its small scale.",
+    "The work is important because it demonstrates sophisticated metalworking and human representation in the Indus Valley Civilization.",
+    "Its exact purpose is uncertain, so interpretations should be presented as possibilities rather than facts."
+  ]
+},
+{
+  period:"ancient", year:"3rd century BCE onward", era:"Mauryan–Shunga Buddhist tradition",
+  title:"Great Stupa at Sanchi",
+  medium:"Stone and brick architecture with carved gateways",
+  place:"Sanchi, Madhya Pradesh",
+  image:"https://commons.wikimedia.org/wiki/Special:Redirect/file/Great_Sanchi_Stupa.jpg",
+  source:"https://commons.wikimedia.org/wiki/File:Great_Sanchi_Stupa.jpg",
+  credit:"Wikimedia Commons",
+  summary:"A major Buddhist monument whose dome, railings and narrative gateways combine architecture with sculpture.",
+  points:[
+    "The earliest core is associated with Emperor Ashoka in the 3rd century BCE; the monument was enlarged in later periods.",
+    "The hemispherical dome represents the stupa form used to mark sacred Buddhist space.",
+    "Its gateways contain carved scenes, symbols and stories connected with Buddhist traditions.",
+    "Sanchi shows how architecture and sculpture could work together to communicate religious ideas."
+  ]
+},
+{
+  period:"classical", year:"c. 5th century CE", era:"Gupta/Vakataka-era Buddhist art",
+  title:"Bodhisattva Padmapani, Ajanta",
+  medium:"Wall painting",
+  place:"Cave 1, Ajanta, Maharashtra",
+  image:"https://commons.wikimedia.org/wiki/Special:Redirect/file/Ajanta_Cave1_Padmapani.jpg",
+  source:"https://commons.wikimedia.org/wiki/File:Ajanta_Cave1_Padmapani.jpg",
+  credit:"Photograph by Ranjan Das2 · CC BY-SA 4.0 · Wikimedia Commons",
+  summary:"One of the best-known Ajanta paintings, portraying Padmapani with a calm expression and refined ornamental detail.",
+  points:[
+    "Ajanta contains rock-cut Buddhist caves and paintings created over several centuries.",
+    "Padmapani is associated with Avalokiteshvara, the bodhisattva of compassion.",
+    "The painting uses flowing lines, expressive eyes, jewellery and carefully arranged colour areas.",
+    "The work demonstrates the sophistication of Indian mural painting and its ability to combine spiritual meaning with elegant human form."
+  ]
+},
+{
+  period:"medieval", year:"c. late 11th century", era:"Chola period",
+  title:"Shiva as Nataraja",
+  medium:"Copper-alloy sculpture",
+  place:"Tamil Nadu, South India",
+  image:"https://commons.wikimedia.org/wiki/Special:Redirect/file/MET_DT240.jpg",
+  source:"https://www.metmuseum.org/art/collection/search/39328",
+  credit:"The Metropolitan Museum of Art · Public Domain",
+  summary:"The iconic dancing form of Shiva turns movement into a visual statement about creation, destruction and the cycle of time.",
+  points:[
+    "The sculpture places Shiva inside a ring of flames, emphasizing cosmic energy.",
+    "The drum in one hand is associated with creation, while fire represents destruction.",
+    "The raised foot offers refuge, while the figure beneath Shiva represents ignorance or illusion.",
+    "Chola bronzes were designed with exceptional attention to balance, movement and ritual presence."
+  ]
+},
+{
+  period:"medieval", year:"c. 1603–1605 CE", era:"Mughal court painting",
+  title:"Abu'l-Fazl Presents the Akbarnama to Akbar",
+  medium:"Ink, pigment and gold on paper",
+  place:"Mughal India",
+  image:"https://commons.wikimedia.org/wiki/Special:Redirect/file/AbulFazlPresentingAkbarnama.jpg",
+  source:"https://commons.wikimedia.org/wiki/File:AbulFazlPresentingAkbarnama.jpg",
+  credit:"Public-domain photographic reproduction · Wikimedia Commons",
+  summary:"A Mughal miniature showing the presentation of the Akbarnama, highlighting the court's interest in history, books and richly detailed manuscript art.",
+  points:[
+    "The scene is attributed to the painter Govardhan and dates to about 1603–1605.",
+    "Mughal miniature painting combined Persian traditions with Indian subjects, artists and visual conventions.",
+    "Fine outlines, controlled colour, patterned surfaces and gold details reward close viewing.",
+    "Manuscript paintings were not simply decoration; they helped record and visually interpret courtly history."
+  ]
+},
+{
+  period:"modern", year:"c. 1870", era:"Modern Indian art",
+  title:"Shakuntala",
+  medium:"Oil on canvas",
+  place:"India",
+  image:"https://commons.wikimedia.org/wiki/Special:Redirect/file/Raja_Ravi_Varma_-_Mahabharata_-_Shakuntala.jpg",
+  source:"https://commons.wikimedia.org/wiki/File:Raja_Ravi_Varma_-_Mahabharata_-_Shakuntala.jpg",
+  credit:"Raja Ravi Varma · public-domain artwork/reproduction information via Wikimedia Commons",
+  summary:"Raja Ravi Varma used European academic painting techniques to reinterpret an Indian literary and mythological subject in a naturalistic style.",
+  points:[
+    "Shakuntala comes from the Mahabharata tradition and was a recurring subject in Ravi Varma's work.",
+    "The painting combines Indian clothing and storytelling with European-style oil painting and modelling.",
+    "Ravi Varma's works helped make mythological imagery accessible to wider audiences through later prints.",
+    "His approach became an important bridge between academic realism and Indian subject matter."
+  ]
+},
+{
+  period:"modern", year:"1931", era:"Early modern Indian modernism",
+  title:"Self-Portrait",
+  medium:"Painting",
+  place:"Amrita Sher-Gil's European/Indian artistic context",
+  image:"https://commons.wikimedia.org/wiki/Special:Redirect/file/Self-portrait_%282%29_1931.jpg",
+  source:"https://commons.wikimedia.org/wiki/File:Self-portrait_%282%29_1931.jpg",
+  credit:"Amrita Sher-Gil · Wikimedia Commons",
+  summary:"An example of Amrita Sher-Gil's early self-portraiture, showing the artist's engagement with European training while developing an identity that became central to modern Indian art.",
+  points:[
+    "Sher-Gil trained in Europe and later developed a distinctive visual language connected strongly to Indian life.",
+    "Her self-portraits show sustained interest in identity, mood and the role of the artist.",
+    "Her later Indian works increasingly focused on ordinary people and everyday life.",
+    "She is widely regarded as a major figure in the development of modern Indian painting."
+  ]
+}
+];
+
+const timeline=document.getElementById("timeline");
+const modal=document.getElementById("modal");
+const modalContent=document.getElementById("modalContent");
+
+function render(filter="all"){
+  timeline.innerHTML="";
+  artifacts.filter(a=>filter==="all"||a.period===filter).forEach((a,i)=>{
+    const event=document.createElement("article");
+    event.className="event";
+    event.innerHTML=`
+      <div class="dot"></div>
+      <div class="card">
+        <img src="${a.image}" alt="${a.title}" loading="lazy">
+        <div>
+          <div class="year">${a.year}</div>
+          <h2>${a.title}</h2>
+          <div class="meta">${a.era} · ${a.medium}</div>
+          <p class="desc">${a.summary}</p>
+          <div class="actions">
+            <button class="view">Explore Artifact</button>
+            <a class="source" href="${a.source}" target="_blank" rel="noopener">
+              <button type="button">View Source</button>
+            </a>
+          </div>
+        </div>
+      </div>`;
+    event.querySelector(".view").addEventListener("click",()=>openModal(a));
+    timeline.appendChild(event);
+  });
+}
+function openModal(a){
+  modalContent.innerHTML=`
+    <div class="modal-grid">
+      <div>
+        <img src="${a.image}" alt="${a.title}">
+        <p class="meta">${a.credit}</p>
+      </div>
+      <div>
+        <div class="year">${a.year} · ${a.era}</div>
+        <h2>${a.title}</h2>
+        <p><strong>Medium:</strong> ${a.medium}<br><strong>Location:</strong> ${a.place}</p>
+        <p>${a.summary}</p>
+        <h3>Historical context & visual features</h3>
+        <ul class="detail-list">${a.points.map(p=>`<li>${p}</li>`).join("")}</ul>
+        <p><a href="${a.source}" target="_blank" rel="noopener" style="color:#e8b86a">Open museum / source page →</a></p>
+      </div>
+    </div>`;
+  modal.classList.add("show");
+}
+document.getElementById("close").addEventListener("click",()=>modal.classList.remove("show"));
+modal.addEventListener("click",e=>{if(e.target===modal) modal.classList.remove("show")});
+document.addEventListener("keydown",e=>{if(e.key==="Escape") modal.classList.remove("show")});
+
+document.querySelectorAll(".filter").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    render(btn.dataset.filter);
+  });
+});
+render();
+</script>
+</body>
+</html>
